@@ -49,6 +49,17 @@ function! nrun#Which(cmd, ...)
 		endif
 
 		let l:execPath = nrun#StrTrim(system(l:fallbackCmd . ' ' . a:cmd))
+		
+		// When nrun#StrTrim returns an empty string it means the cmd was not found. 
+		// In this case we set cmd as execPath to avoid the error:
+		// Error detected while processing function nrun#Which:
+		// line   37:
+                // E928: String required
+		
+		if !l:execPath
+                        let l:execPath = a:cmd
+                endif
+
 		if executable(l:execPath)
 			return l:execPath
 		else
